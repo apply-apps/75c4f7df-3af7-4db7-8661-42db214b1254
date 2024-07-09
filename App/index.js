@@ -2,7 +2,7 @@
 // Combined code from all files
 
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, ActivityIndicator, Button, FlatList, View, ScrollView } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, ActivityIndicator, Button, View, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import * as Speech from 'expo-speech';
@@ -10,23 +10,16 @@ import * as Speech from 'expo-speech';
 const ChatGPT_API_URL = 'http://apihub.p.appply.xyz:3300/chatgpt';
 const languages = ['Spanish', 'French', 'German', 'Chinese', 'Japanese'];
 
-export default function App() {
-    return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Language Learning App</Text>
-            <LanguageLearning />
-        </SafeAreaView>
-    );
-}
-
 function LanguageLearning() {
     const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
     const [words, setWords] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     const fetchBasicWords = async (language) => {
         setLoading(true);
         setWords([]);
+        setCurrentIndex(0);
 
         try {
             const response = await axios.post(ChatGPT_API_URL, {
@@ -61,8 +54,14 @@ function LanguageLearning() {
         Speech.speak(word, { language: selectedLanguage });
     };
 
+    const handleNextWord = () => {
+        if (currentIndex < words.length - 1) {
+            setCurrentIndex(currentIndex + 1);
+        }
+    };
+
     return (
-        <ScrollView contentContainerStyle={styles.innerContainer}>
+        <ScrollView contentContainerStyle={styles.languageLearningContainer}>
             <Text style={styles.instruction}>Select a language to learn basic words:</Text>
             <Picker
                 selectedValue={selectedLanguage}
@@ -74,16 +73,13 @@ function LanguageLearning() {
                 ))}
             </Picker>
             {loading ? <ActivityIndicator size="large" color="#0000ff" /> :
-                <FlatList
-                    data={words}
-                    renderItem={({ item }) => (
-                        <View style={styles.wordContainer}>
-                            <Text style={styles.word}>{item}</Text>
-                            <Button title="Listen" onPress={() => speakWord(item)} />
-                        </View>
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
-                />
+                words.length > 0 && (
+                    <View style={styles.wordContainer}>
+                        <Text style={styles.word}>{words[currentIndex]}</Text>
+                        <Button title="Listen" onPress={() => speakWord(words[currentIndex])} />
+                        <Button title="Next" onPress={handleNextWord} />
+                    </View>
+                )
             }
         </ScrollView>
     );
@@ -101,7 +97,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
-    innerContainer: {
+    languageLearningContainer: {
         flex: 1,
         alignItems: 'center',
     },
@@ -116,12 +112,20 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     wordContainer: {
-        flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10,
     },
     word: {
-        fontSize: 18,
-        marginRight: 10,
+        fontSize: 24,
+        marginBottom: 10,
     },
 });
+
+export default function App() {
+    return (
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.title}>Language Learning App</Text>
+            <LanguageLearning />
+        </SafeAreaView>
+    );
+}
