@@ -1,8 +1,8 @@
 // Filename: index.js
 // Combined code from all files
 
-import React from 'react';
-import { SafeAreaView, StyleSheet, Text, ActivityIndicator, TouchableOpacity, View, ScrollView, TextInput, KeyboardAvoidingView } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, ActivityIndicator, TouchableOpacity, View, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
@@ -22,8 +22,6 @@ function LanguageLearning() {
     const [words, setWords] = useState([]);
     const [loading, setLoading] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [translateResult, setTranslateResult] = useState('');
-    const [inputWord, setInputWord] = useState('');
 
     const fetchBasicWords = async (language) => {
         setLoading(true);
@@ -70,32 +68,6 @@ function LanguageLearning() {
         }
     };
 
-    const translateWord = async (word) => {
-        setLoading(true);
-        try {
-            const response = await axios.post(ChatGPT_API_URL, {
-                messages: [
-                    {
-                        role: 'system',
-                        content: 'You are a helpful assistant. Translate the given word.'
-                    },
-                    {
-                        role: 'user',
-                        content: `Translate the word "${word}" to ${selectedLanguage.label}.`
-                    }
-                ],
-                model: 'gpt-4o'
-            });
-
-            const translatedWord = response.data.response.trim();
-            setTranslateResult(translatedWord);
-        } catch (error) {
-            setTranslateResult('Error translating word.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     return (
         <KeyboardAvoidingView style={styles.flex} behavior="padding">
             <ScrollView contentContainerStyle={styles.container}>
@@ -122,37 +94,43 @@ function LanguageLearning() {
                         </View>
                     )
                 }
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter a word to translate"
-                    placeholderTextColor="#999999"
-                    value={inputWord}
-                    onChangeText={setInputWord}
-                />
-                <TouchableOpacity style={styles.button} onPress={() => translateWord(inputWord)}>
-                    <Text style={styles.buttonText}>Translate</Text>
-                </TouchableOpacity>
-                {loading ? <ActivityIndicator size="large" color="#0000ff" /> :
-                    translateResult && (
-                        <View style={styles.translationContainer}>
-                            <Text style={styles.translationResult}>{translateResult}</Text>
-                        </View>
-                    )
-                }
             </ScrollView>
         </KeyboardAvoidingView>
     );
 }
 
+export default function App() {
+    return (
+        <LinearGradient
+            colors={['#8A2BE2', '#FF00FF']}
+            style={styles.gradient}
+        >
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.title}>Language Learning App</Text>
+                <LanguageLearning />
+            </SafeAreaView>
+        </LinearGradient>
+    );
+}
+
 const styles = StyleSheet.create({
-    flex: {
+    gradient: {
         flex: 1,
     },
     container: {
-        flexGrow: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        flex: 1,
+        marginTop: 20,
         padding: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+        color: '#FFFFFF',
+    },
+    flex: {
+        flex: 1,
     },
     instruction: {
         fontSize: 16,
@@ -192,50 +170,4 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 18,
     },
-    input: {
-        width: '100%',
-        padding: 15,
-        borderRadius: 10,
-        backgroundColor: '#FFFFFF',
-        marginBottom: 20,
-        color: '#000000',
-    },
-    translationContainer: {
-        marginTop: 20,
-        alignItems: 'center',
-    },
-    translationResult: {
-        fontSize: 20,
-        color: '#FFFFFF',
-        textAlign: 'center',
-    },
-    gradient: {
-        flex: 1,
-    },
-    appContainer: {
-        flex: 1,
-        marginTop: 20,
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#FFFFFF',
-    },
 });
-
-export default function App() {
-    return (
-        <LinearGradient
-            colors={['#8A2BE2', '#FF00FF']}
-            style={styles.gradient}
-        >
-            <SafeAreaView style={styles.appContainer}>
-                <Text style={styles.title}>Language Learning App</Text>
-                <LanguageLearning />
-            </SafeAreaView>
-        </LinearGradient>
-    );
-}
