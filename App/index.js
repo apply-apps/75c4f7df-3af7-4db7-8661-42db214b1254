@@ -1,8 +1,8 @@
 // Filename: index.js
 // Combined code from all files
 
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, ActivityIndicator, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
+import React from 'react';
+import { SafeAreaView, StyleSheet, Text, ActivityIndicator, TouchableOpacity, View, ScrollView, TextInput, KeyboardAvoidingView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
@@ -16,17 +16,6 @@ const languages = [
     { label: 'Chinese', code: 'zh' },
     { label: 'Japanese', code: 'ja' },
 ];
-
-function App() {
-    return (
-        <LinearGradient colors={['#8A2BE2', '#FF00FF']} style={styles.gradient}>
-            <SafeAreaView style={styles.container}>
-                <Text style={styles.title}>Language Learning App</Text>
-                <LanguageLearning />
-            </SafeAreaView>
-        </LinearGradient>
-    );
-}
 
 function LanguageLearning() {
     const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
@@ -108,67 +97,62 @@ function LanguageLearning() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.instruction}>Select a language to learn basic words:</Text>
-            <Picker
-                selectedValue={selectedLanguage.label}
-                style={styles.picker}
-                onValueChange={handleLanguageChange}
-            >
-                {languages.map((language) => (
-                    <Picker.Item key={language.code} label={language.label} value={language.label} />
-                ))}
-            </Picker>
-            {loading ? <ActivityIndicator size="large" color="#0000ff" /> :
-                words.length > 0 && (
-                    <View style={styles.wordContainer}>
-                        <Text style={styles.word}>{words[currentIndex]}</Text>
-                        <TouchableOpacity style={styles.button} onPress={() => speakWord(words[currentIndex])}>
-                            <Text style={styles.buttonText}>Listen</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={handleNextWord}>
-                            <Text style={styles.buttonText}>Next</Text>
-                        </TouchableOpacity>
-                    </View>
-                )
-            }
-            <TextInput
-                style={styles.input}
-                placeholder="Enter a word to translate"
-                placeholderTextColor="#999999"
-                value={inputWord}
-                onChangeText={setInputWord}
-            />
-            <TouchableOpacity style={styles.button} onPress={() => translateWord(inputWord)}>
-                <Text style={styles.buttonText}>Translate</Text>
-            </TouchableOpacity>
-            {loading ? <ActivityIndicator size="large" color="#0000ff" /> :
-                translateResult && (
-                    <View style={styles.translationContainer}>
-                        <Text style={styles.translationResult}>{translateResult}</Text>
-                    </View>
-                )
-            }
-        </ScrollView>
+        <KeyboardAvoidingView style={styles.flex} behavior="padding">
+            <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.instruction}>Select a language to learn basic words:</Text>
+                <Picker
+                    selectedValue={selectedLanguage.label}
+                    style={styles.picker}
+                    onValueChange={handleLanguageChange}
+                >
+                    {languages.map((language) => (
+                        <Picker.Item key={language.code} label={language.label} value={language.label} />
+                    ))}
+                </Picker>
+                {loading ? <ActivityIndicator size="large" color="#0000ff" /> :
+                    words.length > 0 && (
+                        <View style={styles.wordContainer}>
+                            <Text style={styles.word}>{words[currentIndex]}</Text>
+                            <TouchableOpacity style={styles.button} onPress={() => speakWord(words[currentIndex])}>
+                                <Text style={styles.buttonText}>Listen</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={handleNextWord}>
+                                <Text style={styles.buttonText}>Next</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
+                <TextInput
+                    style={styles.input}
+                    placeholder="Enter a word to translate"
+                    placeholderTextColor="#999999"
+                    value={inputWord}
+                    onChangeText={setInputWord}
+                />
+                <TouchableOpacity style={styles.button} onPress={() => translateWord(inputWord)}>
+                    <Text style={styles.buttonText}>Translate</Text>
+                </TouchableOpacity>
+                {loading ? <ActivityIndicator size="large" color="#0000ff" /> :
+                    translateResult && (
+                        <View style={styles.translationContainer}>
+                            <Text style={styles.translationResult}>{translateResult}</Text>
+                        </View>
+                    )
+                }
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
-    gradient: {
+    flex: {
         flex: 1,
     },
     container: {
-        flex: 1,
+        flexGrow: 1,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#FFFFFF',
     },
     instruction: {
         fontSize: 16,
@@ -225,6 +209,33 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         textAlign: 'center',
     },
+    gradient: {
+        flex: 1,
+    },
+    appContainer: {
+        flex: 1,
+        marginTop: 20,
+        padding: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+        color: '#FFFFFF',
+    },
 });
 
-export default App;
+export default function App() {
+    return (
+        <LinearGradient
+            colors={['#8A2BE2', '#FF00FF']}
+            style={styles.gradient}
+        >
+            <SafeAreaView style={styles.appContainer}>
+                <Text style={styles.title}>Language Learning App</Text>
+                <LanguageLearning />
+            </SafeAreaView>
+        </LinearGradient>
+    );
+}
