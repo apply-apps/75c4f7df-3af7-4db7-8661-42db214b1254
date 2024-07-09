@@ -68,7 +68,7 @@ function LanguageLearning() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.languageContainer}>
             <Text style={styles.instruction}>Select a language to learn basic words:</Text>
             <Picker
                 selectedValue={selectedLanguage.label}
@@ -83,8 +83,12 @@ function LanguageLearning() {
                 words.length > 0 && (
                     <View style={styles.wordContainer}>
                         <Text style={styles.word}>{words[currentIndex]}</Text>
-                        <Button title="Listen" onPress={() => speakWord(words[currentIndex])} />
-                        <Button title="Next" onPress={handleNextWord} />
+                        <View style={styles.button}>
+                            <Button title="Listen" onPress={() => speakWord(words[currentIndex])} />
+                        </View>
+                        <View style={styles.button}>
+                            <Button title="Next" onPress={handleNextWord} />
+                        </View>
                     </View>
                 )
             }
@@ -112,23 +116,34 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+        textAlign: 'center',
+    },
+    languageContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
     },
     instruction: {
         fontSize: 16,
-        marginBottom: 10,
+        marginBottom: 20,
         textAlign: 'center',
     },
     picker: {
-        height: 50,
-        width: 200,
+        width: '100%',
         marginBottom: 20,
     },
     wordContainer: {
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 20,
+        width: '100%',
     },
     word: {
         fontSize: 24,
+        marginBottom: 20,
+    },
+    button: {
         marginBottom: 10,
+        width: '100%',
     },
 });
