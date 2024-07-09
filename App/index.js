@@ -2,9 +2,10 @@
 // Combined code from all files
 
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, ActivityIndicator, Button, FlatList, ScrollView, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, ActivityIndicator, Button, FlatList, View, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
+import * as Speech from 'expo-speech';
 
 const ChatGPT_API_URL = 'http://apihub.p.appply.xyz:3300/chatgpt';
 const languages = ['Spanish', 'French', 'German', 'Chinese', 'Japanese'];
@@ -56,8 +57,12 @@ function LanguageLearning() {
         fetchBasicWords(itemValue);
     };
 
+    const speakWord = (word) => {
+        Speech.speak(word, { language: selectedLanguage });
+    };
+
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.innerContainer}>
             <Text style={styles.instruction}>Select a language to learn basic words:</Text>
             <Picker
                 selectedValue={selectedLanguage}
@@ -71,7 +76,12 @@ function LanguageLearning() {
             {loading ? <ActivityIndicator size="large" color="#0000ff" /> :
                 <FlatList
                     data={words}
-                    renderItem={({ item }) => <Text style={styles.word}>{item}</Text>}
+                    renderItem={({ item }) => (
+                        <View style={styles.wordContainer}>
+                            <Text style={styles.word}>{item}</Text>
+                            <Button title="Listen" onPress={() => speakWord(item)} />
+                        </View>
+                    )}
                     keyExtractor={(item, index) => index.toString()}
                 />
             }
@@ -85,12 +95,15 @@ const styles = StyleSheet.create({
         marginTop: 20,
         padding: 20,
         backgroundColor: '#FFFFFF',
-        alignItems: 'center',
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+    },
+    innerContainer: {
+        flex: 1,
+        alignItems: 'center',
     },
     instruction: {
         fontSize: 16,
@@ -102,9 +115,13 @@ const styles = StyleSheet.create({
         width: 200,
         marginBottom: 20,
     },
+    wordContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
     word: {
         fontSize: 18,
-        marginBottom: 10,
-        textAlign: 'center',
+        marginRight: 10,
     },
 });
