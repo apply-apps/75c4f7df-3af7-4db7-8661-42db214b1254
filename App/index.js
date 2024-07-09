@@ -8,7 +8,13 @@ import axios from 'axios';
 import * as Speech from 'expo-speech';
 
 const ChatGPT_API_URL = 'http://apihub.p.appply.xyz:3300/chatgpt';
-const languages = ['Spanish', 'French', 'German', 'Chinese', 'Japanese'];
+const languages = [
+    { label: 'Spanish', code: 'es' },
+    { label: 'French', code: 'fr' },
+    { label: 'German', code: 'de' },
+    { label: 'Chinese', code: 'zh' },
+    { label: 'Japanese', code: 'ja' },
+];
 
 function LanguageLearning() {
     const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
@@ -30,7 +36,7 @@ function LanguageLearning() {
                     },
                     {
                         role: 'user',
-                        content: `Give me a list of 10 basic words in ${language}.`
+                        content: `Give me a list of 10 basic words in ${language.label}.`
                     }
                 ],
                 model: 'gpt-4o'
@@ -45,13 +51,14 @@ function LanguageLearning() {
         }
     };
 
-    const handleLanguageChange = (itemValue) => {
-        setSelectedLanguage(itemValue);
-        fetchBasicWords(itemValue);
+    const handleLanguageChange = (itemValue, itemIndex) => {
+        const selected = languages[itemIndex];
+        setSelectedLanguage(selected);
+        fetchBasicWords(selected);
     };
 
     const speakWord = (word) => {
-        Speech.speak(word, { language: selectedLanguage });
+        Speech.speak(word, { language: selectedLanguage.code });
     };
 
     const handleNextWord = () => {
@@ -61,15 +68,15 @@ function LanguageLearning() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.languageLearningContainer}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.instruction}>Select a language to learn basic words:</Text>
             <Picker
-                selectedValue={selectedLanguage}
+                selectedValue={selectedLanguage.label}
                 style={styles.picker}
                 onValueChange={handleLanguageChange}
             >
                 {languages.map((language) => (
-                    <Picker.Item key={language} label={language} value={language} />
+                    <Picker.Item key={language.code} label={language.label} value={language.label} />
                 ))}
             </Picker>
             {loading ? <ActivityIndicator size="large" color="#0000ff" /> :
@@ -85,6 +92,15 @@ function LanguageLearning() {
     );
 }
 
+export default function App() {
+    return (
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.title}>Language Learning App</Text>
+            <LanguageLearning />
+        </SafeAreaView>
+    );
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -96,10 +112,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
-    },
-    languageLearningContainer: {
-        flex: 1,
-        alignItems: 'center',
     },
     instruction: {
         fontSize: 16,
@@ -120,12 +132,3 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 });
-
-export default function App() {
-    return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Language Learning App</Text>
-            <LanguageLearning />
-        </SafeAreaView>
-    );
-}
