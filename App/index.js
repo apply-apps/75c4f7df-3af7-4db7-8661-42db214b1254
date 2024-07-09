@@ -1,7 +1,7 @@
 // Filename: index.js
 // Combined code from all files
 
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, ActivityIndicator, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
@@ -16,6 +16,17 @@ const languages = [
     { label: 'Chinese', code: 'zh' },
     { label: 'Japanese', code: 'ja' },
 ];
+
+function App() {
+    return (
+        <LinearGradient colors={['#8A2BE2', '#FF00FF']} style={styles.gradient}>
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.title}>Language Learning App</Text>
+                <LanguageLearning />
+            </SafeAreaView>
+        </LinearGradient>
+    );
+}
 
 function LanguageLearning() {
     const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
@@ -148,8 +159,16 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        marginTop: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
         padding: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+        color: '#FFFFFF',
     },
     instruction: {
         fontSize: 16,
@@ -206,31 +225,6 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         textAlign: 'center',
     },
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#FFFFFF',
-    },
 });
 
-export default function App() {
-    return (
-        <LinearGradient
-            colors={['#8A2BE2', '#FF00FF']}
-            style={styles.gradient}
-        >
-            <SafeAreaView style={styles.container}>
-                <Text style={styles.title}>Language Learning App</Text>
-                <LanguageLearning />
-            </SafeAreaView>
-        </LinearGradient>
-    );
-}
+export default App;
