@@ -55,7 +55,8 @@
     "react-native-video": "6.3.0",
     "react-native-wagmi-charts": "2.5.2",
     "react-native-web": "~0.19.10",
-    "victory-native": "41.0.1"
+    "victory-native": "41.0.1",
+    "undefined": "react-native-picker/picker"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

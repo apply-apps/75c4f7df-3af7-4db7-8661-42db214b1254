@@ -2,12 +2,14 @@
 // Combined code from all files
 
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, ActivityIndicator, Button, View, ScrollView } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, ScrollView, ActivityIndicator, Button } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import * as Speech from 'expo-speech';
 
 const ChatGPT_API_URL = 'http://apihub.p.appply.xyz:3300/chatgpt';
+
 const languages = [
     { label: 'Spanish', code: 'es' },
     { label: 'French', code: 'fr' },
@@ -68,7 +70,7 @@ function LanguageLearning() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.languageContainer}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.instruction}>Select a language to learn basic words:</Text>
             <Picker
                 selectedValue={selectedLanguage.label}
@@ -98,40 +100,44 @@ function LanguageLearning() {
 
 export default function App() {
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Language Learning App</Text>
-            <LanguageLearning />
-        </SafeAreaView>
+        <LinearGradient
+            colors={['#8A2BE2', '#FF00FF']}
+            style={styles.gradient}
+        >
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.title}>Language Learning App</Text>
+                <LanguageLearning />
+            </SafeAreaView>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
+    gradient: {
+        flex: 1,
+    },
     container: {
         flex: 1,
         marginTop: 20,
         padding: 20,
-        backgroundColor: '#FFFFFF',
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
         textAlign: 'center',
-    },
-    languageContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
+        color: '#FFFFFF',
     },
     instruction: {
         fontSize: 16,
         marginBottom: 20,
         textAlign: 'center',
+        color: '#FFFFFF',
     },
     picker: {
         width: '100%',
         marginBottom: 20,
+        color: '#FFFFFF',
     },
     wordContainer: {
         alignItems: 'center',
@@ -141,6 +147,7 @@ const styles = StyleSheet.create({
     word: {
         fontSize: 24,
         marginBottom: 20,
+        color: '#FFFFFF',
     },
     button: {
         marginBottom: 10,
