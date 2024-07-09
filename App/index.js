@@ -2,14 +2,13 @@
 // Combined code from all files
 
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, ScrollView, ActivityIndicator, Button } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView, StyleSheet, Text, ActivityIndicator, TouchableOpacity, View, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 import * as Speech from 'expo-speech';
 
 const ChatGPT_API_URL = 'http://apihub.p.appply.xyz:3300/chatgpt';
-
 const languages = [
     { label: 'Spanish', code: 'es' },
     { label: 'French', code: 'fr' },
@@ -85,12 +84,12 @@ function LanguageLearning() {
                 words.length > 0 && (
                     <View style={styles.wordContainer}>
                         <Text style={styles.word}>{words[currentIndex]}</Text>
-                        <View style={styles.button}>
-                            <Button title="Listen" onPress={() => speakWord(words[currentIndex])} />
-                        </View>
-                        <View style={styles.button}>
-                            <Button title="Next" onPress={handleNextWord} />
-                        </View>
+                        <TouchableOpacity style={styles.button} onPress={() => speakWord(words[currentIndex])}>
+                            <Text style={styles.buttonText}>Listen</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={handleNextWord}>
+                            <Text style={styles.buttonText}>Next</Text>
+                        </TouchableOpacity>
                     </View>
                 )
             }
@@ -150,7 +149,20 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
     },
     button: {
-        marginBottom: 10,
+        backgroundColor: '#000000',
+        padding: 15,
+        borderRadius: 10,
         width: '100%',
+        marginBottom: 10,
+        alignItems: 'center',
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
     },
 });
