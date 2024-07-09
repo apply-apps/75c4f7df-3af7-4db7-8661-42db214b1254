@@ -1,8 +1,8 @@
 // Filename: index.js
 // Combined code from all files
-
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, ActivityIndicator, Button, TextInput, View, ScrollView } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, ActivityIndicator, Button, TextInput, View, ScrollView, Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
 const ChatGPT_API_URL = 'http://apihub.p.appply.xyz:3300/chatgpt';
@@ -11,8 +11,9 @@ function LanguageLearning() {
     const [inputText, setInputText] = useState('');
     const [responseText, setResponseText] = useState('');
     const [loading, setLoading] = useState(false);
+    const [photo, setPhoto] = useState(null);
 
-    const sendMessage = async () => {
+    const sendMessage = async (text) => {
         setLoading(true);
         setResponseText('');
         
@@ -25,7 +26,7 @@ function LanguageLearning() {
                     },
                     {
                         role: 'user',
-                        content: inputText
+                        content: text
                     }
                 ],
                 model: 'gpt-4o'
@@ -39,23 +40,78 @@ function LanguageLearning() {
         }
     };
 
+    const handleTextTranslate = async () => {
+        await sendMessage(inputText);
+    };
+
+    const handlePhotoTranslate = async () => {
+        if (!photo) return;
+        setLoading(true);
+        setResponseText('');
+
+        try {
+            const ocrText = "Example text from OCR";            
+            await sendMessage(ocrText);
+        } catch (error) {
+            setResponseText('Error fetching response.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setPhoto(result.uri);
+        }
+    };
+
+    const takePhoto = async () => {
+        const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setPhoto(result.uri);
+        }
+    };
+
     return (
-        <ScrollView contentContainerStyle={stylesLearning.container}>
-            <Text style={stylesLearning.instruction}>Enter a sentence you need help translating or understanding:</Text>
+        <ScrollView contentContainerStyle={styles.container}>
+            <Text style={styles.instruction}>Enter a sentence you need help translating or understanding:</Text>
             <TextInput
-                style={stylesLearning.input}
+                style={styles.input}
                 placeholder="Type your sentence here..."
                 value={inputText}
                 onChangeText={setInputText}
             />
-            <Button title="Ask ChatGPT" onPress={sendMessage} disabled={!inputText || loading} />
+            <Button title="Ask ChatGPT" onPress={handleTextTranslate} disabled={!inputText || loading} />
             {loading && <ActivityIndicator size="large" color="#0000ff" />}
-            {responseText ? <Text style={stylesLearning.response}>{responseText}</Text> : null}
+            {responseText ? <Text style={styles.response}>{responseText}</Text> : null}
+
+            <View style={styles.photoSection}>
+                <Button title="Pick an Image" onPress={pickImage} />
+                <Button title="Take a Photo" onPress={takePhoto} />
+            </View>
+            {photo && (
+                <View style={styles.photoContainer}>
+                    <Image source={{ uri: photo }} style={styles.photo} />
+                    <Button title="Translate Photo Text" onPress={handlePhotoTranslate} disabled={loading} />
+                </View>
+            )}
         </ScrollView>
     );
 }
 
-const stylesLearning = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
@@ -80,6 +136,21 @@ const stylesLearning = StyleSheet.create({
         fontSize: 16,
         color: 'black',
     },
+    photoSection: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 20,
+    },
+    photoContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    photo: {
+        width: 200,
+        height: 200,
+        marginBottom: 10,
+        resizeMode: 'contain',
+    },
 });
 
 export default function App() {
@@ -94,8 +165,8 @@ export default function App() {
 const stylesApp = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: '20px',
-        padding: '20px',
+        marginTop: 20,
+        padding: 20,
         backgroundColor: '#FFFFFF',
     },
     title: {
